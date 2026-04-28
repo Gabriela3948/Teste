@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-pearl text-obsidian font-sans antialiased;
+  }
+
+  /* Prevents iOS auto-zoom on inputs */
+  input[type="text"],
+  input[type="email"],
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  input[type="range"] {
+    @apply accent-obsidian;
+  }
+}
