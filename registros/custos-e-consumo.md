@@ -14,13 +14,14 @@ Use apenas dados confirmados. Campo sem dado = "não informado". Não converter 
 
 | Campo | Valor |
 |---|---|
-| Data/hora/fuso | não informado |
-| Plano | não informado |
-| Janelas de limite e % restante (dados da tela `/usage`) | não informado |
-| Próxima renovação de cada janela | não informado |
-| Modelo | não informado |
-| Esforço | não informado |
-| Tarefa | Capítulos 1 a 5: preparação do ambiente, projeto e briefing (sem edição) |
+| Data/hora/fuso | 2026-11-02, hora não informada, America/Sao_Paulo |
+| Plano | Claude Pro |
+| Janelas de limite e % restante (dados da tela `/usage`) | Sessão atual: 6% usado (94% restante). Semana (todos os modelos): 82% usado (18% restante). |
+| Próxima renovação de cada janela | Sessão: 12:20am (America/Sao_Paulo). Semana: 4 de novembro, 1pm (America/Sao_Paulo). |
+| Créditos de uso adicionais | Desligados (`/usage-credits`) |
+| Modelo | Opus 5.5 (Claude Code no Mac) |
+| Esforço | medium |
+| Tarefa | Capítulos 2 a 5 no Mac: projeto, skills e conferência do briefing (sem edição completa) |
 
 ## Registro de produção (Cap. 3 · Comando 04 / Cap. 4 · Comando 05)
 
