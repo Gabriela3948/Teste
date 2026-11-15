@@ -1,0 +1,6 @@
+node_modules
+public/proxies
+public/music
+out
+*.mp4
+.edl-check.mjs
