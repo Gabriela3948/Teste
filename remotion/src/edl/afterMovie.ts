@@ -103,7 +103,7 @@ const cerimonia: Shot[] = [
   }),
   // Alianças e beijo
   S('9838', 1.5, 2.4, {tag: 'BEIJO'}),
-  S('9840', 1.75, 3.0, {speed: 0.55, zoom: [1.06, 1.14]}),
+  S('9840', 2.3, 2.7, {speed: 0.55, zoom: [1.04, 1.12]}),
   S('1156', 7.5, 2.4),
   S('9841', 0.2, 1.9, {toBlack: 0.7}),
 ];
@@ -112,7 +112,13 @@ const noite: Shot[] = [
   S('1101', 0.5, 2.4, {fromBlack: 0.5, tag: 'NOITE'}),
   S('9771', 0.5, 2.0),
   S('1108', 2.0, 2.4),
-  S('9760', 3.0, 2.0),
+  S('9760', 3.0, 2.0, {tag: 'COMIDA'}),
+  S('9775', 1.0, 1.6, {zoom: [1.1, 1.03]}),
+  S('9764', 1.0, 1.5),
+  S('9766', 1.5, 1.6),
+  S('9763', 1.5, 1.5, {zoom: [1.03, 1.1]}),
+  S('9871', 0.6, 1.8),
+  S('9777', 1.5, 1.5),
   // bolo
   S('1201', 0.0, 2.6, {tag: 'BOLO'}),
   S('9851', 0.5, 2.0),
@@ -138,7 +144,7 @@ const pista: Shot[] = [
   S('9928', 4.2, 1.8),
 ];
 
-const final: Shot[] = [S('9936', 2.7, 8.2, {vol: 0.3, tag: 'FINAL'})];
+const final: Shot[] = [S('9936', 3.0, 7.9, {vol: 0.3, tag: 'FINAL'})];
 
 const rawShots = [...local, ...makingOf, ...recepcao, ...cerimonia, ...noite, ...pista, ...final];
 
@@ -184,7 +190,7 @@ export const afterMovie: Edit = {
 // Final: a mão do noivo cobre a câmera (~9,3s do take) → escurece → título
 const p = place(afterMovie.shots);
 const fin = p[p.length - 1].start;
-afterMovie.darken = {at: fin + 7.3, dur: 1.4};
-afterMovie.titles.push({text: 'Babita & Tetê', sub: '14 . 11 . 2026', at: fin + 7.95, dur: 5.2, kind: 'close'});
-afterMovie.total = fin + 13.15;
+afterMovie.darken = {at: fin + 7.0, dur: 1.4};
+afterMovie.titles.push({text: 'Babita & Tetê', sub: '14 . 11 . 2026', at: fin + 7.65, dur: 5.2, kind: 'close'});
+afterMovie.total = fin + 12.85;
 garrafa.dur = afterMovie.total - garrafa.at;
