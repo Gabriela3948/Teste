@@ -91,7 +91,7 @@ const cerimonia: Shot[] = [
   S('9832', 0.1, 4.6, {
     vol: 1,
     subs: [
-      {t: 'Hoje, aos 37 anos, depois de conhecer você', at: 0.0, d: 2.5},
+      {t: '...aos 37 anos, depois de conhecer você', at: 0.0, d: 2.5},
       {t: 'e cultivar a nossa relação dia após dia,', at: 2.5, d: 2.1},
     ],
   }),
