@@ -1,6 +1,8 @@
 // Valida as EDLs: pontos de entrada/saída dentro dos takes e duração das seções.
 import {build} from 'esbuild';
 import fs from 'node:fs';
+// Takes vetados pela cliente — nunca usar.
+const BANNED = ['9935'];
 const cat = JSON.parse(fs.readFileSync('/home/user/work/catalog.json'));
 const dur = Object.fromEntries(cat.map((x) => [x.f.replace(/^IMG_|\.(MOV|mov)$/g, ''), x.dur]));
 await build({entryPoints: ['validate-entry.ts'], bundle: true, platform: 'node', format: 'esm', outfile: '.edl-check.mjs', external: ['remotion', 'react'], logLevel: 'error'});
@@ -11,6 +13,7 @@ for (const [name, e] of Object.entries(m.edits)) {
   let sec = null, secStart = 0;
   p.forEach((s, i) => {
     const used = s.in + s.dur * (s.speed ?? 1);
+    if (BANNED.includes(s.src)) { console.log('  !! TAKE VETADO', s.src); process.exitCode = 1; }
     if (dur[s.src] === undefined) console.log('  !! take inexistente', s.src);
     else if (used > dur[s.src] + 0.01) console.log(`  !! ${s.src} passa do fim: usa até ${used.toFixed(2)} de ${dur[s.src]}`);
     if (!fs.existsSync(`public/proxies/${s.src}.mp4`)) console.log('  (sem proxy ainda)', s.src);

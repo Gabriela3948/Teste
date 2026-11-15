@@ -132,7 +132,6 @@ const noite: Shot[] = [
 const pista: Shot[] = [
   S('9917', 0.3, 2.3, {xin: 0.4, tag: 'PISTA'}),
   S('9902', 0.0, 1.8),
-  S('9935', 0.0, 1.7),
   // virada para a música da festa
   S('9919', 0.6, 2.6, {tag: 'PISTA-FESTA'}),
   S('9921', 1.0, 2.2),
