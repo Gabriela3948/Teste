@@ -2,6 +2,7 @@
 import {bundle} from '@remotion/bundler';
 import {renderMedia, selectComposition} from '@remotion/renderer';
 import path from 'node:path';
+import fs from 'node:fs';
 
 const [id, out, flag] = process.argv.slice(2);
 const draft = flag === '--draft';
@@ -27,4 +28,5 @@ await renderMedia({
     if (p !== last) { last = p; console.log(`${id}: ${Math.round(progress * 100)}%`); }
   },
 });
+fs.rmSync(serveUrl, {recursive: true, force: true});
 console.log('done', out);
