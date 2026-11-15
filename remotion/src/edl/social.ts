@@ -37,7 +37,7 @@ export const social: Edit = {
     S('9924', 1.2, 2.0),
     S('9930', 3.2, 1.5),
     S('9935', 0.0, 1.6),
-    S('1199', 4.0, 4.2, {zoom: [1.02, 1.1], toBlack: 1.6, tag: 'FINAL'}),
+    S('9919', 10.4, 4.0, {zoom: [1.02, 1.08], toBlack: 1.2, tag: 'FINAL'}),
   ],
   music: [],
   titles: [{text: 'Babita & Tetê', sub: '14 . 11 . 2026', at: 0.5, dur: 2.6, kind: 'open'}],
