@@ -30,27 +30,27 @@ const local: Shot[] = [
 const makingOf: Shot[] = [
   S('9696', 4.2, 2.4, {xin: 0.8, blur: true, tag: 'MAKING OF'}),
   S('9683', 0.6, 1.9),
-  S('9688', 1.2, 1.8),
+  S('9702', 0.3, 1.8),
   S('9686', 1.0, 2.1),
-  S('9690', 0.0, 1.7),
-  S('9698', 6.8, 2.0),
+  S('9689', 0.8, 1.8),
+  S('9698', 4.0, 2.0),
   S('9701', 3.5, 2.2, {bw: true}),
-  S('9707', 0.4, 1.9),
+  S('9707', 0.2, 1.8),
 ];
 
 const recepcao: Shot[] = [
   S('9708', 1.0, 2.6, {xin: 0.5, zoom: [1.02, 1.08], tag: 'IDA À RECEPÇÃO'}),
   S('9711', 0.6, 2.2, {tag: 'RECEPÇÃO'}),
   S('9712', 2.4, 2.4),
-  S('9738', 0.6, 2.4),
+  S('9714', 0.5, 2.0),
   S('9749', 0.0, 1.8),
   S('9732', 1.0, 2.4, {toBlack: 0.6}),
 ];
 
 const cerimonia: Shot[] = [
-  S('1122', 0.8, 2.8, {fromBlack: 0.6, speed: 0.8, tag: 'CERIMÔNIA'}),
-  S('9790', 2.6, 2.2),
-  S('1123', 0.8, 2.8, {speed: 0.6}),
+  S('1122', 2.2, 2.8, {fromBlack: 0.6, speed: 0.8, tag: 'CERIMÔNIA'}),
+  S('9790', 3.8, 2.4),
+  S('1123', 0.4, 2.8, {speed: 0.6}),
   S('1125', 0.4, 2.2, {bw: true}),
   // Tia celebrante
   S('1132', 0.95, 2.3, {
@@ -104,7 +104,7 @@ const cerimonia: Shot[] = [
   // Alianças e beijo
   S('9838', 1.5, 2.4, {tag: 'BEIJO'}),
   S('9840', 1.75, 3.0, {speed: 0.55, zoom: [1.06, 1.14]}),
-  S('1156', 2.0, 2.4),
+  S('1156', 7.5, 2.4),
   S('9841', 0.2, 1.9, {toBlack: 0.7}),
 ];
 
@@ -135,10 +135,10 @@ const pista: Shot[] = [
   S('9923', 2.0, 1.8),
   S('9930', 3.0, 2.2),
   S('9931', 1.0, 1.8),
-  S('9928', 2.0, 2.0),
+  S('9928', 4.2, 1.8),
 ];
 
-const final: Shot[] = [S('9936', 2.4, 8.5, {vol: 0.3, tag: 'FINAL'})];
+const final: Shot[] = [S('9936', 2.7, 8.2, {vol: 0.3, tag: 'FINAL'})];
 
 const rawShots = [...local, ...makingOf, ...recepcao, ...cerimonia, ...noite, ...pista, ...final];
 
@@ -184,7 +184,7 @@ export const afterMovie: Edit = {
 // Final: a mão do noivo cobre a câmera (~9,3s do take) → escurece → título
 const p = place(afterMovie.shots);
 const fin = p[p.length - 1].start;
-afterMovie.darken = {at: fin + 7.55, dur: 1.4};
-afterMovie.titles.push({text: 'Babita & Tetê', sub: '14 . 11 . 2026', at: fin + 8.2, dur: 5.2, kind: 'close'});
-afterMovie.total = fin + 13.4;
+afterMovie.darken = {at: fin + 7.3, dur: 1.4};
+afterMovie.titles.push({text: 'Babita & Tetê', sub: '14 . 11 . 2026', at: fin + 7.95, dur: 5.2, kind: 'close'});
+afterMovie.total = fin + 13.15;
 garrafa.dur = afterMovie.total - garrafa.at;

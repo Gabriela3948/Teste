@@ -14,14 +14,14 @@ export const social: Edit = {
     S('9619', 2.0, 1.3),
     S('9613', 1.0, 1.2, {zoom: [1.12, 1.05]}),
     S('9686', 0.6, 1.7, {tag: 'ENSAIO'}),
-    S('9690', 0.0, 1.4),
+    S('9689', 0.8, 1.5),
     S('9701', 1.2, 1.7, {bw: true}),
     S('9708', 0.8, 2.0, {tag: 'RECEPÇÃO'}),
     S('9711', 0.6, 1.4),
-    S('9738', 0.8, 1.5),
-    S('1122', 1.0, 2.2, {speed: 0.8, tag: 'CERIMÔNIA'}),
-    S('9790', 2.4, 1.7),
-    S('1123', 1.0, 1.8, {speed: 0.6}),
+    S('9714', 0.5, 1.6),
+    S('1122', 2.4, 2.2, {speed: 0.8, tag: 'CERIMÔNIA'}),
+    S('9790', 4.0, 1.7),
+    S('1123', 0.4, 1.8, {speed: 0.6}),
     S('1141', 11.3, 1.85, {vol: 1, subs: [{t: 'Amar é conhecer.', at: 0.1, d: 1.7}]}),
     S('9823', 5.8, 1.7),
     S('9836', 0.4, 1.4),
@@ -32,7 +32,7 @@ export const social: Edit = {
     S('9921', 1.2, 1.5, {tag: 'PISTA'}),
     S('9924', 1.2, 2.0),
     S('9930', 3.2, 1.5),
-    S('9936', 2.4, 8.5, {vol: 0.2, tag: 'FINAL'}),
+    S('9936', 2.7, 8.2, {vol: 0.2, tag: 'FINAL'}),
   ],
   music: [],
   titles: [{text: 'Babita & Tetê', sub: '14 . 11 . 2026', at: 0.5, dur: 2.6, kind: 'open'}],
@@ -43,8 +43,8 @@ export const social: Edit = {
   social.music = [m];
   const p = place(social.shots);
   const fin = p[p.length - 1].start;
-  social.darken = {at: fin + 7.55, dur: 1.4};
-  social.titles.push({text: 'Babita & Tetê', at: fin + 8.2, dur: 3.6, kind: 'close'});
-  social.total = fin + 11.8;
+  social.darken = {at: fin + 7.3, dur: 1.4};
+  social.titles.push({text: 'Babita & Tetê', at: fin + 7.95, dur: 3.6, kind: 'close'});
+  social.total = fin + 11.55;
   m.dur = social.total;
 }
