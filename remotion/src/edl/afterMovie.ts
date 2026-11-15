@@ -16,9 +16,9 @@ import garrafaBeats from '../beats/garrafa.json';
 
 const local: Shot[] = [
   S('9649', 0.0, 5.0, {fromBlack: 2.0, zoom: [1.0, 1.08], tag: 'LOCAL'}),
-  S('9639', 0.4, 3.2, {xin: 1.0, zoom: [1.02, 1.1]}),
+  S('9639', 0.6, 2.4, {xin: 1.0, zoom: [1.02, 1.1]}),
   S('9633', 0.8, 2.4, {xin: 0.5}),
-  S('9642', 1.2, 3.0, {xin: 0.4, zoom: [1.02, 1.06]}),
+  S('9642', 1.4, 2.4, {xin: 0.4, zoom: [1.02, 1.06]}),
   S('9623', 5.0, 2.2),
   S('9619', 2.0, 2.2),
   S('9613', 1.0, 2.0, {zoom: [1.12, 1.03]}),
@@ -30,16 +30,16 @@ const local: Shot[] = [
 const makingOf: Shot[] = [
   S('9696', 4.2, 2.4, {xin: 0.8, blur: true, tag: 'MAKING OF'}),
   S('9683', 0.6, 1.9),
-  S('9693', 0.0, 1.8, {bw: true}),
-  S('9686', 0.6, 2.8),
+  S('9688', 1.2, 1.8),
+  S('9686', 1.0, 2.1),
   S('9690', 0.0, 1.7),
-  S('9698', 2.2, 2.2),
-  S('9701', 1.0, 2.8, {bw: true}),
-  S('9707', 0.0, 2.0),
+  S('9698', 6.8, 2.0),
+  S('9701', 3.5, 2.2, {bw: true}),
+  S('9707', 0.4, 1.9),
 ];
 
 const recepcao: Shot[] = [
-  S('9708', 0.5, 3.8, {xin: 0.5, zoom: [1.02, 1.08], tag: 'IDA À RECEPÇÃO'}),
+  S('9708', 1.0, 2.6, {xin: 0.5, zoom: [1.02, 1.08], tag: 'IDA À RECEPÇÃO'}),
   S('9711', 0.6, 2.2, {tag: 'RECEPÇÃO'}),
   S('9712', 2.4, 2.4),
   S('9738', 0.6, 2.4),
@@ -48,8 +48,8 @@ const recepcao: Shot[] = [
 ];
 
 const cerimonia: Shot[] = [
-  S('1122', 0.5, 3.4, {fromBlack: 0.6, speed: 0.8, tag: 'CERIMÔNIA'}),
-  S('9790', 2.2, 3.0),
+  S('1122', 0.8, 2.8, {fromBlack: 0.6, speed: 0.8, tag: 'CERIMÔNIA'}),
+  S('9790', 2.6, 2.2),
   S('1123', 0.8, 2.8, {speed: 0.6}),
   S('1125', 0.4, 2.2, {bw: true}),
   // Tia celebrante
@@ -120,7 +120,7 @@ const noite: Shot[] = [
   S('9859', 0.0, 2.3),
   S('9862', 0.3, 2.2),
   // brinde
-  S('9863', 1.4, 3.4, {tag: 'BRINDE'}),
+  S('9863', 1.6, 2.8, {tag: 'BRINDE'}),
 ];
 
 const pista: Shot[] = [
@@ -131,14 +131,14 @@ const pista: Shot[] = [
   S('9919', 0.6, 2.6, {tag: 'PISTA-FESTA'}),
   S('9921', 1.0, 2.2),
   S('9922', 0.5, 2.0),
-  S('9924', 1.0, 3.0),
+  S('9924', 1.2, 2.4),
   S('9923', 2.0, 1.8),
   S('9930', 3.0, 2.2),
   S('9931', 1.0, 1.8),
   S('9928', 2.0, 2.0),
 ];
 
-const final: Shot[] = [S('9936', 0.0, 10.9, {vol: 0.3, tag: 'FINAL'})];
+const final: Shot[] = [S('9936', 2.4, 8.5, {vol: 0.3, tag: 'FINAL'})];
 
 const rawShots = [...local, ...makingOf, ...recepcao, ...cerimonia, ...noite, ...pista, ...final];
 
@@ -184,7 +184,7 @@ export const afterMovie: Edit = {
 // Final: a mão do noivo cobre a câmera (~9,3s do take) → escurece → título
 const p = place(afterMovie.shots);
 const fin = p[p.length - 1].start;
-afterMovie.darken = {at: fin + 9.15, dur: 1.6};
-afterMovie.titles.push({text: 'Babita & Tetê', sub: '14 . 11 . 2026', at: fin + 9.9, dur: 5.2, kind: 'close'});
-afterMovie.total = fin + 15.1;
+afterMovie.darken = {at: fin + 7.55, dur: 1.4};
+afterMovie.titles.push({text: 'Babita & Tetê', sub: '14 . 11 . 2026', at: fin + 8.2, dur: 5.2, kind: 'close'});
+afterMovie.total = fin + 13.4;
 garrafa.dur = afterMovie.total - garrafa.at;
