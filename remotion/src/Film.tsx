@@ -145,7 +145,7 @@ const TitleView: React.FC<{t: Title}> = ({t}) => {
     interpolate(frame, [dF - outF, dF], [1, 0], clamp),
   );
   const blur = interpolate(frame, [0, inF], [10, 0], clamp);
-  const track = interpolate(frame, [0, dF], [0.06, 0.12]);
+  const track = interpolate(frame, [0, dF], [0.03, 0.07]);
   const subO = interpolate(frame, [inF * 0.8, inF * 1.8], [0, 1], clamp) * o;
 
   if (t.kind === 'small') {
@@ -161,18 +161,23 @@ const TitleView: React.FC<{t: Title}> = ({t}) => {
     <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center'}}>
       <div
         style={{
-          fontFamily: 'Cormorant',
-          fontWeight: 300,
-          fontSize: t.kind === 'open' ? 150 : 132,
+          fontFamily: 'Bodoni',
+          fontWeight: 400,
+          fontSize: t.kind === 'open' ? 118 : 104,
           color: '#f6efe3',
-          letterSpacing: `${track}em`,
+          display: 'flex',
           opacity: o,
           filter: `blur(${blur}px)`,
           textShadow: '0 2px 30px rgba(0,0,0,0.45)',
           lineHeight: 1,
         }}
       >
-        {t.text}
+        {/* espaçamento por letra (letter-spacing desloca acentos como o de "Tetê") */}
+        {[...t.text.normalize('NFC')].map((ch, i, arr) => (
+          <span key={i} style={{marginRight: i < arr.length - 1 ? `${track}em` : 0, whiteSpace: 'pre'}}>
+            {ch}
+          </span>
+        ))}
       </div>
       {t.sub ? (
         <div
@@ -203,10 +208,10 @@ const SubView: React.FC<{text: string; dur: number}> = ({text, dur}) => {
     <AbsoluteFill style={{justifyContent: 'flex-end', alignItems: 'center', paddingBottom: 78}}>
       <div
         style={{
-          fontFamily: 'Cormorant',
+          fontFamily: 'Garamond',
           fontStyle: 'italic',
-          fontWeight: 500,
-          fontSize: 46,
+          fontWeight: 400,
+          fontSize: 50,
           color: '#f7efdf',
           opacity: o,
           maxWidth: 1400,

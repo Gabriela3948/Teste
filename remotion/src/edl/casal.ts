@@ -1,6 +1,9 @@
 import type {Edit} from '../types';
 import {S} from './helpers';
 import {place} from '../Film';
+import {snapToBeats} from './beatSnap';
+import amorBeats from '../beats/amor.json';
+import type {Music} from '../types';
 
 /** VÍDEO DO CASAL (~1:00) — só os dois: ensaio, ida à recepção, poucos cumprimentos, altar e beijo. */
 export const casal: Edit = {
@@ -26,15 +29,19 @@ export const casal: Edit = {
     S('9840', 1.75, 3.0, {speed: 0.55, zoom: [1.06, 1.14]}),
     S('1201', 0.0, 2.6, {xin: 0.4, tag: 'FESTA'}),
     S('9935', 0.0, 1.7),
-    S('9936', 0.0, 10.9, {vol: 1, tag: 'FINAL'}),
+    S('9936', 0.0, 10.9, {vol: 0.2, tag: 'FINAL'}),
   ],
   music: [],
   titles: [{text: 'Babita & Tetê', at: 1.0, dur: 3.0, kind: 'open'}],
 };
 {
+  const m: Music = {src: 'amor.wav', at: 0, from: 13.0, dur: 80, fin: 1.0, fout: 3.5, vol: 0.95};
+  casal.shots = snapToBeats(casal.shots, m, amorBeats, {tol: 0.3});
+  casal.music = [m];
   const p = place(casal.shots);
   const fin = p[p.length - 1].start;
   casal.darken = {at: fin + 9.15, dur: 1.6};
   casal.titles.push({text: 'Babita & Tetê', sub: '14 . 11 . 2026', at: fin + 9.9, dur: 4.6, kind: 'close'});
   casal.total = fin + 14.5;
+  m.dur = casal.total;
 }

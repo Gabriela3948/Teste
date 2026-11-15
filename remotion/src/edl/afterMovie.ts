@@ -1,5 +1,11 @@
-import type {Edit, Shot} from '../types';
+import type {Edit, Music, Shot} from '../types';
 import {S} from './helpers';
+import {place} from '../Film';
+import {snapToBeats} from './beatSnap';
+import homeBeats from '../beats/home.json';
+import mrazBeats from '../beats/mraz.json';
+import amorBeats from '../beats/amor.json';
+import garrafaBeats from '../beats/garrafa.json';
 
 /**
  * AFTER MOVIE — Babita & Tetê (~2:50)
@@ -122,10 +128,7 @@ const pista: Shot[] = [
   S('9902', 0.0, 1.8),
   S('9935', 0.0, 1.7),
   // virada para a música da festa
-  S('9919', 0.6, 2.6, {
-    tag: 'PISTA-FESTA',
-    vo: {src: '9919', at: 0, from: 0.0, dur: 18.5, vol: 1.0, fin: 0.6, fout: 1.2},
-  }),
+  S('9919', 0.6, 2.6, {tag: 'PISTA-FESTA'}),
   S('9921', 1.0, 2.2),
   S('9922', 0.5, 2.0),
   S('9924', 1.0, 3.0),
@@ -135,22 +138,53 @@ const pista: Shot[] = [
   S('9928', 2.0, 2.0),
 ];
 
-const final: Shot[] = [S('9936', 0.0, 10.9, {vol: 1, tag: 'FINAL'})];
+const final: Shot[] = [S('9936', 0.0, 10.9, {vol: 0.3, tag: 'FINAL'})];
 
-const shots = [...local, ...makingOf, ...recepcao, ...cerimonia, ...noite, ...pista, ...final];
+const rawShots = [...local, ...makingOf, ...recepcao, ...cerimonia, ...noite, ...pista, ...final];
+
+/* ---------- Trilha: 4 músicas, cortes encaixados na batida ---------- */
+const T = (shots: Shot[], tag: string) => place(shots).find((x) => x.tag === tag)!.start;
+const nearest = (arr: number[], t: number) => arr.reduce((a, b) => (Math.abs(b - t) < Math.abs(a - t) ? b : a));
+
+let shots = rawShots;
+// 1) Home — local, making of, recepção
+const home: Music = {src: 'home.wav', at: 0, from: 5.0, dur: 0, fin: 0.5, fout: 2.2, vol: 0.9};
+home.dur = T(shots, 'CERIMÔNIA') + 0.8;
+shots = snapToBeats(shots, home, homeBeats, {to: T(shots, 'CERIMÔNIA') - 0.1});
+home.dur = T(shots, 'CERIMÔNIA') + 0.8;
+
+// 2) 93 Million Miles — cerimônia ("people get ready" na entrada da noiva)
+const mraz: Music = {src: 'mraz.wav', at: T(shots, 'CERIMÔNIA') - 0.3, from: 22.0, dur: 0, fin: 1.0, fout: 2.0, vol: 0.85};
+mraz.dur = T(shots, 'NOITE') - mraz.at + 0.8;
+shots = snapToBeats(shots, mraz, mrazBeats, {from: mraz.at, to: T(shots, 'TIA') - 0.1});
+shots = snapToBeats(shots, mraz, mrazBeats, {from: T(shots, 'BEIJO'), to: T(shots, 'NOITE') - 0.1});
+mraz.dur = T(shots, 'NOITE') - mraz.at + 0.8;
+
+// 3) O Que É o Amor — noite, bolo, brinde, abertura da pista
+const amor: Music = {src: 'amor.wav', at: T(shots, 'NOITE') - 0.3, from: 13.5, dur: 0, fin: 0.8, fout: 1.0, vol: 0.9};
+amor.dur = T(shots, 'PISTA-FESTA') - amor.at + 0.5;
+shots = snapToBeats(shots, amor, amorBeats, {from: amor.at + 0.5, to: T(shots, 'PISTA-FESTA') - 0.1});
+amor.dur = T(shots, 'PISTA-FESTA') - amor.at + 0.5;
+
+// 4) Na Boquinha da Garrafa — pista até o fim (entra seca, na batida, no corte)
+const pf = T(shots, 'PISTA-FESTA');
+const gFrom = nearest(garrafaBeats, 31.0);
+const garrafa: Music = {src: 'garrafa.wav', at: pf, from: gFrom, dur: 0, fin: 0.05, fout: 3.5, vol: 0.95};
+garrafa.dur = 30;
+shots = snapToBeats(shots, garrafa, garrafaBeats, {from: pf + 0.5, tol: 0.32});
 
 export const afterMovie: Edit = {
   shots,
-  music: [],
+  music: [home, mraz, amor, garrafa],
   titles: [
-    {text: 'Babita & Tetê', sub: '14 . 11 . 2026', at: 1.0, dur: 4.0, kind: 'open'},
+    {text: 'Babita & Tetê', sub: '14 . 11 . 2026', at: 0.8, dur: 3.5, kind: 'open'},
   ],
 };
 
 // Final: a mão do noivo cobre a câmera (~9,3s do take) → escurece → título
-import {place} from '../Film';
 const p = place(afterMovie.shots);
 const fin = p[p.length - 1].start;
 afterMovie.darken = {at: fin + 9.15, dur: 1.6};
 afterMovie.titles.push({text: 'Babita & Tetê', sub: '14 . 11 . 2026', at: fin + 9.9, dur: 5.2, kind: 'close'});
 afterMovie.total = fin + 15.1;
+garrafa.dur = afterMovie.total - garrafa.at;

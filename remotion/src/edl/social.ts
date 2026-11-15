@@ -1,6 +1,9 @@
 import type {Edit} from '../types';
 import {S} from './helpers';
 import {place} from '../Film';
+import {snapToBeats} from './beatSnap';
+import homeBeats from '../beats/home.json';
+import type {Music} from '../types';
 
 /** REDES SOCIAIS (~1:00) — geral do dia, mais rápido, menos cenas e menos pessoas. */
 export const social: Edit = {
@@ -29,15 +32,19 @@ export const social: Edit = {
     S('9921', 1.2, 1.5, {tag: 'PISTA'}),
     S('9924', 1.2, 2.0),
     S('9930', 3.2, 1.5),
-    S('9936', 0.0, 10.9, {vol: 1, tag: 'FINAL'}),
+    S('9936', 0.0, 10.9, {vol: 0.2, tag: 'FINAL'}),
   ],
   music: [],
   titles: [{text: 'Babita & Tetê', sub: '14 . 11 . 2026', at: 0.5, dur: 2.6, kind: 'open'}],
 };
 {
+  const m: Music = {src: 'home.wav', at: 0, from: 17.0, dur: 80, fin: 0.6, fout: 3.0, vol: 0.95};
+  social.shots = snapToBeats(social.shots, m, homeBeats, {tol: 0.3});
+  social.music = [m];
   const p = place(social.shots);
   const fin = p[p.length - 1].start;
   social.darken = {at: fin + 9.15, dur: 1.6};
   social.titles.push({text: 'Babita & Tetê', at: fin + 9.9, dur: 3.6, kind: 'close'});
   social.total = fin + 13.5;
+  m.dur = social.total;
 }
