@@ -46,7 +46,7 @@ export const cerimonia: Edit = {
     S('1128', 3.0, 2.0),
     S('1137', 0.3, 2.5, {vo: v('1137', 0.3, 5.0, [{t: 'Gosta de planejar, calcular e, se possível, antecipar até o imprevisto.', at: 0.2, d: 4.7}])}),
     S('1127', 3.0, 2.5),
-    S('1140', 0.3, 2.7, {vo: v('1141', 0.9, 2.7, [{t: 'E isso é uma compreensão muito madura do amor.', at: 0.1, d: 2.5}])}),
+    S('1140', 0.3, 2.95, {vo: v('1141', 1.25, 2.95, [{t: 'E isso é uma compreensão muito madura do amor.', at: 0.05, d: 2.8}])}),
     S('1141', 5.3, 7.85, {
       vol: 1,
       subs: [
