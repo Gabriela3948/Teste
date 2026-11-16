@@ -75,6 +75,8 @@ export type Edit = {
   shots: Shot[];
   music: Music[];
   ducks?: Duck[];
+  /** nível da música sob falas (padrão 0.2) */
+  duckLevel?: number;
   voices?: Voice[];
   titles: Title[];
   /** escurecimento final (mão na câmera) */

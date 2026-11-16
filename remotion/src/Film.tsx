@@ -270,8 +270,9 @@ export const allVoices = (edit: Edit): Voice[] => [
 
 export const autoDucks = (edit: Edit): Duck[] => {
   const d: Duck[] = [...(edit.ducks ?? [])];
-  for (const s of place(edit.shots)) if ((s.vol ?? 0) >= 0.8) d.push({at: s.start, dur: s.dur, level: 0.2});
-  for (const v of allVoices(edit)) if (v.duck) d.push({at: v.at, dur: v.dur, level: 0.2});
+  const lv = edit.duckLevel ?? 0.2;
+  for (const s of place(edit.shots)) if ((s.vol ?? 0) >= 0.8) d.push({at: s.start, dur: s.dur, level: lv});
+  for (const v of allVoices(edit)) if (v.duck) d.push({at: v.at, dur: v.dur, level: lv});
   return d;
 };
 

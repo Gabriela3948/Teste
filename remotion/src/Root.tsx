@@ -4,6 +4,7 @@ import {Film, FPS, editDuration} from './Film';
 import {afterMovie} from './edl/afterMovie';
 import {casal} from './edl/casal';
 import {social} from './edl/social';
+import {cerimonia} from './edl/cerimonia';
 import type {Edit} from './types';
 
 const comp = (id: string, edit: Edit) => (
@@ -24,5 +25,6 @@ export const Root: React.FC = () => (
     {comp('AfterMovie', afterMovie)}
     {comp('Casal', casal)}
     {comp('Social', social)}
+    {comp('Cerimonia', cerimonia)}
   </>
 );
