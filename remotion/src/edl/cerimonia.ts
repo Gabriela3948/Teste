@@ -71,6 +71,14 @@ export const cerimonia: Edit = {
     S('9828', 5.9, 2.6, {vol: 1, tag: 'VOTOS DELA', subs: [{t: 'Quero que todos vocês aqui fechem os olhos.', at: 0.2, d: 2.2}]}),
     S('1152', 1.5, 1.8),
     S('1151', 2.0, 1.6),
+    S('9832', 0.0, 4.65, {
+      vo: v('9832', 0.0, 8.25, [
+        {t: '...aos 37 anos, depois de conhecer você', at: 0.1, d: 2.4},
+        {t: 'e cultivar a nossa relação dia após dia,', at: 2.5, d: 2.1},
+        {t: 'eu já entendi que amor, na verdade, é como as nossas manhãs de sábado.', at: 4.7, d: 3.5},
+      ]),
+    }),
+    S('9836', 0.0, 3.6),
     S('9837', 2.8, 3.6, {
       vo: v('9837', 2.8, 3.6, [{t: 'Então, sabe quando eu tive a certeza absoluta de que eu queria me casar com você?', at: 0.1, d: 3.4}]),
     }),
