@@ -55,8 +55,8 @@ export const Reel: React.FC = () => {
       <AbsoluteFill style={{background: 'linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(6,12,40,.45) 100%)'}} />
 
       {/* plataforma de rastreamento: material oficial Aldeia Tracking / Aldeia Fleet */}
-      <Sequence from={pA} durationInFrames={pB - pA}><Product logo="trk_logo.png" pills="trk_pills.png" panel="trk_panel.jpg" dur={pB - pA + 6} logoW={560} panFrom={-330} panTo={-450} /></Sequence>
-      <Sequence from={pB} durationInFrames={pC - pB}><Product logo="flt_logo.png" pills="flt_pills.png" panel="flt_panel.jpg" dur={pC - pB} logoW={500} panFrom={-40} panTo={-150} /></Sequence>
+      <Sequence from={pA} durationInFrames={pB - pA}><Product logo="trk_logo.png" pills="trk_pills.png" panel="trk_panel.jpg" dur={pB - pA} fadeIn logoW={560} panFrom={-330} panTo={-450} /></Sequence>
+      <Sequence from={pB} durationInFrames={pC - pB}><Product logo="flt_logo.png" pills="flt_pills.png" panel="flt_panel.jpg" dur={pC - pB} lead={9} logoW={500} panFrom={-40} panTo={-150} /></Sequence>
 
       <Captions hideAfter={END} />
 
