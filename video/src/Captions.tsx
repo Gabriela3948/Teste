@@ -2,17 +2,17 @@ import React from 'react';
 import {interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
 import w1 from './words1.json';
 import w2 from './words2.json';
-import {MINT, T2} from './theme';
+import {A1, A2, T2} from './theme';
 
 type W = {w: string; s: number; e: number};
-const HL = /fenatran|américa|latina|parcerias|novidades|rastreamento|motoristas|frota|logística|agro|aldeia/i;
 
 // tempos dos takes -> tempo global (take1 cortado em 0.9s, take2 em 0.95s)
 const fix = (ws: W[], cut: number, off: number): W[] =>
   ws.map((x, i) => ({w: x.w, s: Math.max(i === 0 ? 0.05 : 0, x.s - cut) + off, e: x.e - cut + off}));
-const a = fix(w1 as W[], 0.9, 0);
-a[0].s = 0.08;
-const b = fix(w2 as W[], 0.95, T2 / 30);
+const a = fix(w1 as W[], A1, 0);
+a[0].s = 0.06;
+const b = fix(w2 as W[], A2, T2 / 30);
+b[0].s = T2 / 30 + 0.03;
 
 const group = (ws: W[]): W[][] => {
   const out: W[][] = [];
@@ -21,7 +21,7 @@ const group = (ws: W[]): W[][] => {
     const len = cur.map((c) => c.w).join(' ').length;
     const gap = cur.length ? x.s - cur[cur.length - 1].e : 0;
     const conn = /^(e|de|da|do|os|a|para|com|ou|seja)$/i.test(x.w);
-    if (cur.length && (len + x.w.length > 17 || cur.length >= 3 || gap > 0.35 || (conn && cur.length >= 2))) {
+    if (cur.length && (len + x.w.length > 20 || cur.length >= 3 || gap > 0.35 || (conn && cur.length >= 2))) {
       out.push(cur);
       cur = [];
     }
@@ -50,20 +50,23 @@ export const Captions: React.FC<{hideAfter: number}> = ({hideAfter}) => {
   const local = frame - Math.round((g[0].s - 0.03) * fps);
   const pop = spring({frame: local, fps, config: {damping: 16, stiffness: 240, mass: 0.5}});
   return (
-    <div style={{position: 'absolute', left: 70, right: 70, top: 1270, display: 'flex', justifyContent: 'center'}}>
+    <div style={{position: 'absolute', left: 60, right: 60, top: 1405, display: 'flex', justifyContent: 'center'}}>
       <div
         style={{
-          fontFamily: 'Montserrat', fontWeight: 800, fontSize: 74, lineHeight: 1.12, letterSpacing: -1.5, textAlign: 'center',
-          color: '#fff', textShadow: '0 4px 22px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.6)',
-          transform: `scale(${interpolate(pop, [0, 1], [0.9, 1])})`, opacity: interpolate(pop, [0, 1], [0.2, 1]),
+          fontFamily: 'Montserrat', fontWeight: 800, fontSize: 47, lineHeight: 1.3, letterSpacing: 1.5, textAlign: 'center', textTransform: 'uppercase',
+          color: '#fff', textShadow: '0 3px 10px rgba(0,0,0,.75), 0 1px 2px rgba(0,0,0,.8)', whiteSpace: 'nowrap',
+          transform: `scale(${interpolate(pop, [0, 1], [0.94, 1])})`, opacity: interpolate(pop, [0, 1], [0.3, 1]),
         }}
       >
         {g.map((x, i) => {
           const clean = x.w.replace(/[.,]$/, '');
-          const hl = HL.test(clean);
+          const next = g[i + 1];
+          const active = t >= x.s - 0.03 && (!next || t < next.s - 0.03);
           return (
-            <span key={i} style={{color: hl ? MINT : t >= x.s - 0.03 ? '#fff' : 'rgba(255,255,255,.72)'}}>
-              {clean}{i < g.length - 1 ? ' ' : ''}
+            <span key={i} style={{display: 'inline-block', padding: '1px 11px', margin: '0 1px', borderRadius: 11,
+              background: active ? 'linear-gradient(90deg, #2F7FEA 0%, #3BD8B2 100%)' : 'transparent',
+              textShadow: active ? '0 2px 6px rgba(0,0,0,.35)' : undefined}}>
+              {clean}
             </span>
           );
         })}
