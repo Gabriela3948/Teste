@@ -41,7 +41,7 @@ const Talk: React.FC<{src: string; offset: number}> = ({src, offset}) => {
 };
 
 export const Reel: React.FC = () => {
-  const musicVol = (fr: number) => interpolate(fr, [0, 12, END - 10, END], [0, 0.028, 0.028, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const musicVol = (fr: number) => interpolate(fr, [0, 12, TOTAL - 24, TOTAL], [0, 0.06, 0.06, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   const pA = f(g2(2.38)), pB = f(g2(4.38)), pC = f(g2(6.14));
   return (
     <AbsoluteFill style={{background: '#141F52'}}>
