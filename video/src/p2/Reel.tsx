@@ -1,7 +1,8 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Easing, OffthreadVideo, Sequence, interpolate, staticFile, useCurrentFrame} from 'remotion';
 import {Captions} from './Captions';
-import {Screen} from './Screen';
+import {Scene} from './Scene';
+import {CONNECT, GESTOR, TRACKING} from './brand';
 import {CUES, Elements, LightFlash} from './Elements';
 import {A2, END, ENDLEN, L1, L2, L3, S2, S3, TOTAL} from './timing';
 
@@ -12,20 +13,23 @@ const g2 = (src: number) => S2 + f(src - A2);
 const FACE = {x: 0.54, y: 0.535};
 const TARGET = {x: 0.5, y: 0.35};
 
-// movimento de camera por pontos-chave: aproxima e afasta varias vezes em cada take
-type KF = [number, number][]; // [frame local, escala]
-const cam = (frame: number, kf: KF) =>
-  interpolate(frame, kf.map((k) => k[0]), kf.map((k) => k[1]), {easing: Easing.inOut(Easing.sin), extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+// movimento de camera por pontos-chave: [frame local, escala, altura do rosto na tela]
+type KF = [number, number, number][];
+const E = {easing: Easing.inOut(Easing.sin), extrapolateLeft: 'clamp' as const, extrapolateRight: 'clamp' as const};
+const cam = (frame: number, kf: KF) => ({
+  s: interpolate(frame, kf.map((k) => k[0]), kf.map((k) => k[1]), E),
+  y: interpolate(frame, kf.map((k) => k[0]), kf.map((k) => k[2]), E),
+});
 
 const Talk: React.FC<{src: string; kf: KF; offset: number}> = ({src, kf, offset}) => {
   const frame = useCurrentFrame();
   const g = frame + offset;
-  const s = cam(frame, kf);
+  const {s, y} = cam(frame, kf);
   const hit = g - (CUES.REWORK + 6);
   const shake = hit >= 0 && hit < 9 ? Math.sin(hit * 2.6) * (9 - hit) * 1.6 : 0;
-  const drift = Math.sin(g / 47) * 10; // leve deriva lateral
+  const drift = Math.sin(g / 47) * 10;
   const tx = 1080 * (TARGET.x - s * FACE.x) + shake + drift;
-  const ty = 1920 * (TARGET.y - s * FACE.y) + shake * 0.6;
+  const ty = 1920 * (y - s * FACE.y) + shake * 0.6;
   return (
     <AbsoluteFill style={{background: '#000', overflow: 'hidden'}}>
       <OffthreadVideo src={staticFile(src)} style={{position: 'absolute', left: 0, top: 0, width: 1080, height: 1920, transformOrigin: '0 0', transform: `translate(${tx}px, ${ty}px) scale(${s})`}} />
@@ -33,12 +37,13 @@ const Talk: React.FC<{src: string; kf: KF; offset: number}> = ({src, kf, offset}
   );
 };
 
-const B = CUES.BREAK, R = CUES.REWORK + 6;
-const KF1: KF = [[0, 1.85], [96, 2.32], [120, 2.32], [158, 1.92], [250, 2.12], [B - 6, 2.05], [B + 9, 2.42], [R - 12, 2.28], [R - 2, 2.2], [R + 5, 2.5], [L1, 2.42]];
+const HI = 0.35, LO = 0.575; // rosto no alto (close) / mais baixo (abre espaco para o painel)
+const PN = CUES.panel, B = CUES.BREAK, R = CUES.REWORK + 6;
+const KF1: KF = [[0, 1.88, HI], [96, 2.32, HI], [PN - 10, 2.34, HI], [PN + 20, 1.72, LO], [B - 6, 1.86, LO], [B + 9, 2.02, LO], [R - 3, 1.94, LO], [R + 5, 2.12, LO], [L1, 2.04, LO]];
 const o2 = CUES.ONE - S2, e2 = g2(14.6) - S2;
-const KF2: KF = [[0, 1.88], [o2 - 8, 2.08], [o2 + 6, 2.42], [o2 + 40, 2.36], [e2 - 1, 2.36], [e2, 1.95], [CUES.one2 - S2 - 4, 2.1], [CUES.one2 - S2 + 8, 2.42], [L2, 2.45]];
+const KF2: KF = [[0, 1.76, LO], [o2 + 2, 1.86, LO], [o2 + 22, 2.36, HI], [e2 - 1, 2.36, HI], [e2, 1.92, HI], [CUES.one2 - S2 - 4, 2.08, HI], [CUES.one2 - S2 + 8, 2.4, HI], [L2, 2.44, HI]];
 const u3 = CUES.unite - S3, l3 = CUES.link - S3;
-const KF3: KF = [[0, 1.9], [u3 - 6, 2.15], [u3 + 8, 2.42], [l3 - 22, 2.05], [l3 - 4, 2.08], [l3 + 8, 2.46], [L3, 2.4]];
+const KF3: KF = [[0, 1.9, HI], [u3 - 6, 2.15, HI], [u3 + 8, 2.42, HI], [l3 - 22, 2.05, HI], [l3 - 4, 2.08, HI], [l3 + 8, 2.46, HI], [L3, 2.4, HI]];
 
 const Sfx: React.FC<{at: number; name: string; vol?: number}> = ({at, name, vol = 0.5}) => (
   <Sequence from={Math.max(0, at)} durationInFrames={60}><Audio src={staticFile(`p2/sfx/${name}.mp3`)} volume={vol} /></Sequence>
@@ -59,9 +64,12 @@ export const ReelPlataforma: React.FC = () => {
 
       <Elements />
 
-      <Sequence from={gA} durationInFrames={gB - gA + X}><Screen logo="p2/gst_logo.png" pills="p2/gst_pills.png" panel="p2/gst_panel.jpg" dur={gB - gA + X} logoW={520} panX={-90} panFrom={-240} panTo={-420} /></Sequence>
-      <Sequence from={gB} durationInFrames={gC - gB + X}><Screen logo="p2/trk_logo.png" pills="p2/trk_pills.png" panel="p2/trk_panel.jpg" dur={gC - gB + X} logoW={560} panX={-90} panFrom={-300} panTo={-480} /></Sequence>
-      <Sequence from={gC} durationInFrames={gD - gC}><Screen logo="p2/con_logo.png" pills="p2/con_pills.png" panel="p2/con_panel.jpg" dur={gD - gC} logoW={540} panX={-90} panFrom={-120} panTo={-320} fadeOut /></Sequence>
+      <Sequence from={gA} durationInFrames={gB - gA + X}><Scene dark={GESTOR.dark} accent={GESTOR.accent} logo="p2/lg_gestor.png" mock="p2/m_gestor.png" mockW={1900} mockX={-430} mockY={585} tilt={-7} dur={gB - gA + X}
+        chips={[{text: 'Financeiro', at: g2(6.4) - gA}, {text: 'Clientes', at: g2(7.15) - gA}]} /></Sequence>
+      <Sequence from={gB} durationInFrames={gC - gB + X}><Scene dark={TRACKING.dark} accent={TRACKING.accent} logo="p2/lg_tracking.png" mock="p2/m_tracking.png" mockW={1800} mockX={-370} mockY={640} tilt={6} dur={gC - gB + X}
+        chips={[{text: 'App da sua central', at: g2(8.75) - gB}, {text: 'Usuário final', at: g2(10.0) - gB}]} /></Sequence>
+      <Sequence from={gC} durationInFrames={gD - gC}><Scene dark={CONNECT.dark} accent={CONNECT.accent} logo="p2/lg_connect.png" mock="p2/m_connect.png" mockW={1900} mockX={-20} mockY={580} tilt={-6} dur={gD - gC} fadeOut
+        chips={[{text: 'Técnicos homologados', at: g2(12.55) - gC}, {text: 'Brasil inteiro', at: g2(13.6) - gC}]} /></Sequence>
 
       <LightFlash at={S2} />
       <LightFlash at={S3} />
@@ -74,16 +82,15 @@ export const ReelPlataforma: React.FC = () => {
       </Sequence>
 
       {/* efeitos sonoros */}
-      <Sfx at={CUES.start} name="pop" vol={0.4} />
+      <Sfx at={CUES.panel - 2} name="whoosh" vol={0.4} />
       {CUES.items.map((at) => <Sfx key={at} at={at} name="pop" />)}
       <Sfx at={CUES.BREAK} name="error" vol={0.6} />
       <Sfx at={CUES.REWORK + 5} name="thud" vol={0.6} />
       <Sfx at={S2 - 6} name="whoosh" vol={0.45} />
       <Sfx at={CUES.JOIN} name="whoosh" vol={0.3} />
-      <Sfx at={CUES.ONE - 4} name="chime" vol={0.45} />
-      <Sfx at={gA - 2} name="whoosh" vol={0.4} />
-      <Sfx at={gB - 2} name="whoosh" vol={0.4} />
-      <Sfx at={gC - 2} name="whoosh" vol={0.4} />
+      <Sfx at={CUES.ONE - 2} name="chime" vol={0.45} />
+      {[gA, gB, gC].map((at) => <Sfx key={at} at={at - 2} name="whoosh" vol={0.4} />)}
+      {[6.4, 7.15, 8.75, 10.0, 12.55, 13.6].map((t) => <Sfx key={t} at={g2(t)} name="pop" vol={0.45} />)}
       {[0, 5, 10].map((d) => <Sfx key={d} at={CUES.trio + d} name="pop" vol={0.4} />)}
       <Sfx at={CUES.one2} name="chime" vol={0.45} />
       <Sfx at={S3 - 6} name="whoosh" vol={0.45} />
