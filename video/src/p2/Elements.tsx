@@ -1,0 +1,190 @@
+import React from 'react';
+import {AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
+import {A1, A2, A3, S2, S3} from './timing';
+
+const f = (s: number) => Math.round(s * 30);
+const g1 = (src: number) => f(src - A1);
+const g2 = (src: number) => S2 + f(src - A2);
+const g3 = (src: number) => S3 + f(src - A3);
+const GRAD = 'linear-gradient(90deg, #2F7FEA 0%, #3BD8B2 100%)';
+const NAVY = '#141F52';
+const RED = '#FF3B30';
+
+const icons: Record<string, React.ReactNode> = {
+  money: <><circle cx="12" cy="12" r="9" /><path d="M14.800 9.200c-.500-.900-1.500-1.400-2.800-1.400-1.700 0-2.900.800-2.900 2.100 0 3 5.900 1.300 5.900 4.200 0 1.300-1.200 2.100-3 2.100-1.400 0-2.500-.600-3-1.500M12 6v1.800M12 16.200V18" /></>,
+  pin: <><path d="M12 21s-6.500-5.600-6.500-10.500a6.500 6.500 0 0 1 13 0C18.500 15.400 12 21 12 21z" /><circle cx="12" cy="10.500" r="2.400" /></>,
+  chat: <><path d="M4 5.500h16v10.500H10l-4.500 3.500V16H4z" /><path d="M8 9.500h8M8 12.500h5" /></>,
+  sheet: <><rect x="4" y="4.500" width="16" height="15" rx="2" /><path d="M4 9.500h16M4 14.500h16M10 4.500v15" /></>,
+};
+const Icon: React.FC<{name: string; color: string; size?: number}> = ({name, color, size = 44}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.900" strokeLinecap="round" strokeLinejoin="round">{icons[name]}</svg>
+);
+
+// os quatro "sistemas soltos" citados no take 1
+const items = [
+  {label: 'Financeiro', icon: 'money', at: g1(6.7), x: 60, y: 330, rot: -2.5, dx: -26, dy: -14},
+  {label: 'Rastreamento', icon: 'pin', at: g1(8.05), x: 560, y: 330, rot: 2, dx: 24, dy: -18},
+  {label: 'Grupo de WhatsApp', icon: 'chat', at: g1(9.45), x: 60, y: 456, rot: 1.5, dx: -22, dy: 16},
+  {label: 'Planilha de chip', icon: 'sheet', at: g1(10.85), x: 560, y: 456, rot: -2, dx: 26, dy: 20},
+];
+const BREAK = g1(12.85); // "nenhum dos sistemas conversa entre si"
+const REWORK = g1(15.05); // "todo erro vira retrabalho seu"
+const JOIN = g2(3.1); // "junta tudo isso"
+const ONE = g2(4.4); // "em uma só plataforma"
+const OUT1 = g2(5.5) + 4;
+
+const Pill: React.FC<{it: (typeof items)[number]; i: number}> = ({it, i}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const inn = spring({frame: frame - it.at, fps, config: {damping: 13, stiffness: 170, mass: 0.6}});
+  const brk = spring({frame: frame - BREAK - i * 2, fps, config: {damping: 9, stiffness: 120, mass: 0.7}});
+  const join = spring({frame: frame - JOIN - i * 2, fps, config: {damping: 20, stiffness: 110, mass: 0.8}});
+  if (frame < it.at || frame > ONE + 6) return null;
+  const shake = frame >= REWORK && frame < JOIN ? Math.sin((frame - REWORK) * 1.7 + i) * interpolate(frame, [REWORK, REWORK + 26], [7, 0], {extrapolateRight: 'clamp'}) : 0;
+  const bad = interpolate(frame, [BREAK, BREAK + 8, JOIN, JOIN + 8], [0, 1, 1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const cx = 540 - 230, cy = 400;
+  const x = interpolate(join, [0, 1], [it.x + it.dx * brk, cx]) + shake;
+  const y = interpolate(join, [0, 1], [it.y + it.dy * brk, cy]);
+  const color = bad > 0.5 ? RED : '#2F7FEA';
+  return (
+    <div style={{position: 'absolute', left: x, top: y, width: 460, height: 96, borderRadius: 22, background: '#fff', border: `3px solid ${color}`,
+      boxShadow: '0 14px 34px rgba(8,14,40,.35)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 26px', boxSizing: 'border-box',
+      fontFamily: 'Montserrat', fontWeight: 700, fontSize: 33, color: '#1b1f2e', letterSpacing: -0.3,
+      opacity: Math.min(inn, interpolate(join, [0.75, 1], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})),
+      transform: `scale(${interpolate(inn, [0, 1], [0.6, 1]) * interpolate(join, [0, 1], [1, 0.7])}) rotate(${it.rot * brk * (1 - join)}deg)`}}>
+      <span>{it.label}</span>
+      <Icon name={it.icon} color={color} />
+    </div>
+  );
+};
+
+// contador: "?" -> 1 -> 2 -> 3 -> 4 sistemas
+const Counter: React.FC = () => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const start = g1(2.9);
+  if (frame < start || frame > JOIN + 10) return null;
+  const inn = spring({frame: frame - start, fps, config: {damping: 13, stiffness: 150, mass: 0.7}});
+  const out = interpolate(frame, [JOIN, JOIN + 10], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const n = items.filter((it) => frame >= it.at).length;
+  const last = n ? items[n - 1].at : start;
+  const bump = spring({frame: frame - last, fps, config: {damping: 9, stiffness: 220, mass: 0.5}});
+  const bad = frame >= BREAK;
+  return (
+    <div style={{position: 'absolute', left: 60, top: 150, display: 'flex', alignItems: 'center', gap: 24, opacity: Math.min(inn, out), transform: `translateY(${interpolate(inn, [0, 1], [-40, 0])}px)`}}>
+      <div style={{width: 132, height: 132, borderRadius: 66, background: bad ? RED : GRAD, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 14px 34px rgba(8,14,40,.4)',
+        fontFamily: 'Montserrat', fontWeight: 800, fontSize: 78, color: '#fff', transform: `scale(${interpolate(bump, [0, 1], [0.7, 1])})`}}>
+        {n === 0 ? '?' : n}
+      </div>
+      <div style={{fontFamily: 'Montserrat', fontWeight: 800, fontSize: 50, color: '#fff', textTransform: 'uppercase', letterSpacing: 1, lineHeight: 1.05, textShadow: '0 3px 12px rgba(0,0,0,.7)'}}>
+        {n <= 1 ? 'sistema' : 'sistemas'}<br />
+        <span style={{fontSize: 30, fontWeight: 700, opacity: 0.92, letterSpacing: 0.5}}>{bad ? 'que não se conversam' : 'na sua central'}</span>
+      </div>
+    </div>
+  );
+};
+
+const Badge: React.FC<{from: number; to: number; top: number}> = ({from, to, top}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  if (frame < from || frame > to) return null;
+  const inn = spring({frame: frame - from, fps, config: {damping: 12, stiffness: 150, mass: 0.7}});
+  const out = interpolate(frame, [to - 8, to], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  return (
+    <div style={{position: 'absolute', left: 190, top, width: 700, height: 250, borderRadius: 44, background: NAVY, boxShadow: '0 22px 50px rgba(8,14,40,.5)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14,
+      opacity: Math.min(1, inn * 1.4, out), transform: `scale(${interpolate(inn, [0, 1], [0.6, 1])})`}}>
+      <Img src={staticFile('p2/logo_tec.png')} style={{height: 118}} />
+      <div style={{fontFamily: 'Montserrat', fontWeight: 800, fontSize: 31, letterSpacing: 2.5, textTransform: 'uppercase', color: '#fff', background: GRAD, padding: '5px 22px', borderRadius: 12}}>Uma só plataforma</div>
+    </div>
+  );
+};
+
+// fim do take 2: os tres produtos juntos
+const prods = ['p2/gst_logo.png', 'p2/trk_logo.png', 'p2/con_logo.png'];
+const Trio: React.FC = () => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const from = g2(14.7), to = S3 + 2;
+  if (frame < from || frame > to) return null;
+  const out = interpolate(frame, [to - 8, to], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  return (
+    <>
+      {prods.map((p, i) => {
+        const s = spring({frame: frame - from - i * 5, fps, config: {damping: 13, stiffness: 160, mass: 0.6}});
+        return (
+          <div key={p} style={{position: 'absolute', left: 60 + i * 325, top: 160, width: 310, height: 150, borderRadius: 26, background: '#fff', boxShadow: '0 14px 34px rgba(8,14,40,.35)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            opacity: Math.min(s, out), transform: `translateY(${interpolate(s, [0, 1], [-50, 0])}px) scale(${interpolate(s, [0, 1], [0.7, 1])})`}}>
+            <Img src={staticFile(p)} style={{width: 262}} />
+          </div>
+        );
+      })}
+    </>
+  );
+};
+
+// take 3: o que esta fragmentado se une; depois "link na bio"
+const frag = [
+  {icon: 'money', x: 90, y: 190, r: -14}, {icon: 'pin', x: 380, y: 150, r: 10}, {icon: 'chat', x: 650, y: 210, r: -8}, {icon: 'sheet', x: 880, y: 160, r: 16},
+];
+const Fragments: React.FC = () => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const from = g3(3.2), unite = g3(4.2), done = g3(5.0);
+  if (frame < from || frame > done + 4) return null;
+  const u = spring({frame: frame - unite, fps, config: {damping: 18, stiffness: 120, mass: 0.8}});
+  return (
+    <>
+      {frag.map((it, i) => {
+        const s = spring({frame: frame - from - i * 3, fps, config: {damping: 12, stiffness: 170, mass: 0.6}});
+        const fl = Math.sin((frame + i * 9) / 9) * 8 * (1 - u);
+        return (
+          <div key={i} style={{position: 'absolute', left: interpolate(u, [0, 1], [it.x, 485]), top: interpolate(u, [0, 1], [it.y, 250]) + fl, width: 110, height: 110, borderRadius: 28, background: '#fff', border: '3px solid #2F7FEA', boxShadow: '0 14px 34px rgba(8,14,40,.35)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: Math.min(s, interpolate(u, [0.7, 1], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})), transform: `scale(${interpolate(s, [0, 1], [0.5, 1])}) rotate(${it.r * (1 - u)}deg)`}}>
+            <Icon name={it.icon} color="#2F7FEA" size={58} />
+          </div>
+        );
+      })}
+    </>
+  );
+};
+
+const LinkBio: React.FC = () => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const from = g3(6.85);
+  if (frame < from) return null;
+  const s = spring({frame: frame - from, fps, config: {damping: 11, stiffness: 160, mass: 0.6}});
+  const pulse = 1 + Math.sin((frame - from) / 5) * 0.025;
+  return (
+    <div style={{position: 'absolute', left: 250, top: 190, width: 580, height: 116, borderRadius: 58, background: GRAD, boxShadow: '0 18px 44px rgba(8,14,40,.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 18,
+      fontFamily: 'Montserrat', fontWeight: 800, fontSize: 46, color: '#fff', letterSpacing: 1.5, textTransform: 'uppercase', opacity: s, transform: `scale(${interpolate(s, [0, 1], [0.6, 1]) * pulse})`}}>
+      <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.400" strokeLinecap="round" strokeLinejoin="round"><path d="M10 14a4 4 0 0 0 5.700 0l3-3a4 4 0 0 0-5.700-5.700l-1 1" /><path d="M14 10a4 4 0 0 0-5.700 0l-3 3a4 4 0 0 0 5.700 5.700l1-1" /></svg>
+      Link na bio
+    </div>
+  );
+};
+
+export const Elements: React.FC = () => (
+  <AbsoluteFill>
+    <Counter />
+    {items.map((it, i) => <Pill key={it.label} it={it} i={i} />)}
+    <Badge from={ONE - 4} to={OUT1} top={300} />
+    <Trio />
+    <Badge from={g2(15.45)} to={S3 + 2} top={350} />
+    <Fragments />
+    <Badge from={g3(4.75)} to={g3(6.7)} top={180} />
+    <LinkBio />
+  </AbsoluteFill>
+);
+
+// flash de luz na troca de takes
+export const LightFlash: React.FC<{at: number}> = ({at}) => {
+  const frame = useCurrentFrame();
+  const d = frame - at;
+  if (d < -7 || d > 12) return null;
+  const o = d < 0 ? interpolate(d, [-7, 0], [0, 0.92]) : interpolate(d, [0, 12], [0.92, 0]);
+  const sweep = interpolate(d, [-7, 12], [-60, 160]);
+  return (
+    <AbsoluteFill style={{opacity: o, background: `radial-gradient(ellipse 90% 60% at ${sweep}% 35%, rgba(255,255,255,1) 0%, rgba(214,240,255,.92) 35%, rgba(170,225,235,.55) 70%, rgba(255,255,255,.35) 100%)`, mixBlendMode: 'screen'}} />
+  );
+};
