@@ -57,8 +57,9 @@ const Panel: React.FC = () => {
     <div style={{position: 'absolute', left: 50, top: interpolate(up, [0, 1], [118, 120]), width: 980, height: h, transformOrigin: '50% 0%',
       transform: `translate(${shake}px, ${interpolate(inn, [0, 1], [-780, 0])}px) scale(${interpolate(up, [0, 1], [1, 0.72])})`, opacity: out}}>
       {frame >= ONE && <div style={{position: 'absolute', left: 490 - 520 * (0.3 + ring), top: 135 - 520 * (0.3 + ring), width: 1040 * (0.3 + ring), height: 1040 * (0.3 + ring), borderRadius: '50%', border: `7px solid ${TEC.mint}`, opacity: (1 - ring) * 0.9}} />}
-      <div style={{position: 'absolute', inset: 0, borderRadius: 44, overflow: 'hidden', background: `linear-gradient(150deg, #0A22A8 0%, ${TEC.blue} 60%)`, border: `2px solid ${bad ? RED : 'rgba(205,233,194,.35)'}`, boxShadow: '0 30px 70px rgba(0,8,60,.55)'}}>
-        <div style={{position: 'absolute', inset: 0, ...dots(TEC.mint, 0.13)}} />
+      <div style={{position: 'absolute', inset: 0, borderRadius: 44, overflow: 'hidden', }}>
+        <div style={{position: 'absolute', inset: 0, borderRadius: 44, background: `linear-gradient(150deg, #0A22A8 0%, ${TEC.blue} 60%)`, border: `2px solid ${bad ? RED : 'rgba(205,233,194,.35)'}`, boxSizing: 'border-box', opacity: 1 - Math.min(1, one * 1.3)}} />
+        <div style={{position: 'absolute', inset: 0, ...dots(TEC.mint, 0.13 * (1 - Math.min(1, one * 1.3)))}} />
 
         {/* cabecalho */}
         <div style={{position: 'absolute', left: 36, right: 36, top: 26, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', opacity: 1 - join, fontFamily: 'Montserrat'}}>
@@ -87,7 +88,7 @@ const Panel: React.FC = () => {
 
         {/* uma so plataforma */}
         <div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, opacity: Math.min(1, one * 1.5), transform: `scale(${interpolate(one, [0, 1], [0.6, 1])})`}}>
-          <Img src={staticFile('p2/logo_tec.png')} style={{height: 118}} />
+          <Img src={staticFile('p2/logo_tec.png')} style={{height: 150, filter: 'drop-shadow(0 6px 18px rgba(0,0,0,.6))'}} />
           <div style={{fontFamily: 'Montserrat', fontWeight: 800, fontSize: 34, letterSpacing: 3, textTransform: 'uppercase', color: TEC.blue, background: TEC.mint, padding: '6px 26px', borderRadius: 14}}>Uma só plataforma</div>
         </div>
       </div>
@@ -110,17 +111,16 @@ const Badge: React.FC<{from: number; to: number; top: number}> = ({from, to, top
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   if (frame < from || frame > to) return null;
-  const inn = spring({frame: frame - from, fps, config: {damping: 12, stiffness: 150, mass: 0.7}});
+  const inn = spring({frame: frame - from, fps, config: {damping: 11, stiffness: 160, mass: 0.7}});
   const out = interpolate(frame, [to - 8, to], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   const ring = interpolate(frame - from, [0, 16], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   return (
     <>
       <div style={{position: 'absolute', left: 540 - 360 * (0.4 + ring), top: top + 95 - 360 * (0.4 + ring), width: 720 * (0.4 + ring), height: 720 * (0.4 + ring), borderRadius: '50%', border: `6px solid ${TEC.mint}`, opacity: (1 - ring) * 0.9}} />
-      <div style={{position: 'absolute', left: 200, top, width: 680, height: 190, borderRadius: 40, overflow: 'hidden', background: `linear-gradient(150deg, #0A22A8 0%, ${TEC.blue} 60%)`, border: '2px solid rgba(205,233,194,.35)', boxShadow: '0 22px 50px rgba(0,8,60,.55)',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, opacity: Math.min(1, inn * 1.4, out), transform: `scale(${interpolate(inn, [0, 1], [0.6, 1])})`}}>
-        <div style={{position: 'absolute', inset: 0, ...dots(TEC.mint, 0.13)}} />
-        <Img src={staticFile('p2/logo_tec.png')} style={{height: 86}} />
-        <div style={{fontFamily: 'Montserrat', fontWeight: 800, fontSize: 25, letterSpacing: 2.5, textTransform: 'uppercase', color: TEC.blue, background: TEC.mint, padding: '4px 18px', borderRadius: 10}}>Uma só plataforma</div>
+      <div style={{position: 'absolute', left: 140, top, width: 800, height: 190, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12,
+        opacity: Math.min(1, inn * 1.4, out), transform: `scale(${interpolate(inn, [0, 1], [0.55, 1])})`}}>
+        <Img src={staticFile('p2/logo_tec.png')} style={{height: 118, filter: 'drop-shadow(0 6px 18px rgba(0,0,0,.6))'}} />
+        <div style={{fontFamily: 'Montserrat', fontWeight: 800, fontSize: 27, letterSpacing: 2.5, textTransform: 'uppercase', color: TEC.blue, background: TEC.mint, padding: '4px 18px', borderRadius: 10, boxShadow: '0 8px 20px rgba(0,0,0,.35)'}}>Uma só plataforma</div>
       </div>
     </>
   );
@@ -179,12 +179,16 @@ const LinkBio: React.FC = () => {
   if (frame < from) return null;
   const s = spring({frame: frame - from, fps, config: {damping: 11, stiffness: 160, mass: 0.6}});
   const pulse = 1 + Math.sin((frame - from) / 5) * 0.03;
+  const bob = Math.abs(Math.sin((frame - from) / 6)) * 16;
   return (
-    <div style={{position: 'absolute', left: 230, top: 200, width: 620, height: 124, borderRadius: 62, background: TEC.mint, border: `4px solid ${TEC.blue}`, boxShadow: '0 18px 44px rgba(0,8,60,.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 18,
-      fontFamily: 'Montserrat', fontWeight: 800, fontSize: 48, color: TEC.blue, letterSpacing: 1.5, textTransform: 'uppercase', opacity: s, transform: `scale(${interpolate(s, [0, 1], [0.6, 1]) * pulse})`}}>
-      <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke={TEC.blue} strokeWidth="2.600" strokeLinecap="round" strokeLinejoin="round"><path d="M10 14a4 4 0 0 0 5.700 0l3-3a4 4 0 0 0-5.700-5.700l-1 1" /><path d="M14 10a4 4 0 0 0-5.700 0l-3 3a4 4 0 0 0 5.700 5.700l1-1" /></svg>
+    <>
+    <div style={{position: 'absolute', left: 210, top: 1120, width: 660, height: 132, borderRadius: 66, background: TEC.mint, border: `4px solid ${TEC.blue}`, boxShadow: '0 18px 44px rgba(0,8,60,.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 18,
+      fontFamily: 'Montserrat', fontWeight: 800, fontSize: 52, color: TEC.blue, letterSpacing: 1.5, textTransform: 'uppercase', opacity: s, transform: `scale(${interpolate(s, [0, 1], [0.5, 1]) * pulse})`}}>
+      <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke={TEC.blue} strokeWidth="2.600" strokeLinecap="round" strokeLinejoin="round"><path d="M10 14a4 4 0 0 0 5.700 0l3-3a4 4 0 0 0-5.700-5.700l-1 1" /><path d="M14 10a4 4 0 0 0-5.700 0l-3 3a4 4 0 0 0 5.700 5.700l1-1" /></svg>
       Link na bio
     </div>
+    <svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke={TEC.mint} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{position: 'absolute', left: 495, top: 1010 - bob, opacity: s, filter: 'drop-shadow(0 4px 10px rgba(0,0,0,.6))'}}><path d="M12 4v15M5.500 12.500L12 19l6.500-6.500" /></svg>
+    </>
   );
 };
 
