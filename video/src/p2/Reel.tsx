@@ -12,22 +12,19 @@ const g2 = (src: number) => S2 + f(src - A2);
 const FACE = {x: 0.54, y: 0.535};
 const TARGET = {x: 0.5, y: 0.35};
 
-// empurroes suaves de zoom nas palavras de enfase
-const bumps = [CUES.items[0], CUES.items[2], CUES.BREAK, CUES.REWORK + 6, CUES.ONE, CUES.one2, CUES.unite, CUES.link];
-const bump = (frame: number) => bumps.reduce((acc, at) => {
-  const d = frame - at;
-  if (d < -4 || d > 40) return acc;
-  return acc + 0.07 * (d < 4 ? interpolate(d, [-4, 4], [0, 1], {easing: Easing.out(Easing.cubic)}) : interpolate(d, [4, 40], [1, 0], {easing: Easing.inOut(Easing.sin)}));
-}, 0);
+// movimento de camera por pontos-chave: aproxima e afasta varias vezes em cada take
+type KF = [number, number][]; // [frame local, escala]
+const cam = (frame: number, kf: KF) =>
+  interpolate(frame, kf.map((k) => k[0]), kf.map((k) => k[1]), {easing: Easing.inOut(Easing.sin), extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
 
-// zoom lento por pontos-chave (aberto -> fechado), com o rosto sempre centralizado
-const Talk: React.FC<{src: string; dur: number; from: number; to: number; offset: number}> = ({src, dur, from, to, offset}) => {
+const Talk: React.FC<{src: string; kf: KF; offset: number}> = ({src, kf, offset}) => {
   const frame = useCurrentFrame();
   const g = frame + offset;
-  const s = interpolate(frame, [0, dur], [from, to], {easing: Easing.inOut(Easing.sin), extrapolateRight: 'clamp'}) + bump(g);
+  const s = cam(frame, kf);
   const hit = g - (CUES.REWORK + 6);
   const shake = hit >= 0 && hit < 9 ? Math.sin(hit * 2.6) * (9 - hit) * 1.6 : 0;
-  const tx = 1080 * (TARGET.x - s * FACE.x) + shake;
+  const drift = Math.sin(g / 47) * 10; // leve deriva lateral
+  const tx = 1080 * (TARGET.x - s * FACE.x) + shake + drift;
   const ty = 1920 * (TARGET.y - s * FACE.y) + shake * 0.6;
   return (
     <AbsoluteFill style={{background: '#000', overflow: 'hidden'}}>
@@ -35,6 +32,13 @@ const Talk: React.FC<{src: string; dur: number; from: number; to: number; offset
     </AbsoluteFill>
   );
 };
+
+const B = CUES.BREAK, R = CUES.REWORK + 6;
+const KF1: KF = [[0, 1.85], [96, 2.32], [120, 2.32], [158, 1.92], [250, 2.12], [B - 6, 2.05], [B + 9, 2.42], [R - 12, 2.28], [R - 2, 2.2], [R + 5, 2.5], [L1, 2.42]];
+const o2 = CUES.ONE - S2, e2 = g2(14.6) - S2;
+const KF2: KF = [[0, 1.88], [o2 - 8, 2.08], [o2 + 6, 2.42], [o2 + 40, 2.36], [e2 - 1, 2.36], [e2, 1.95], [CUES.one2 - S2 - 4, 2.1], [CUES.one2 - S2 + 8, 2.42], [L2, 2.45]];
+const u3 = CUES.unite - S3, l3 = CUES.link - S3;
+const KF3: KF = [[0, 1.9], [u3 - 6, 2.15], [u3 + 8, 2.42], [l3 - 22, 2.05], [l3 - 4, 2.08], [l3 + 8, 2.46], [L3, 2.4]];
 
 const Sfx: React.FC<{at: number; name: string; vol?: number}> = ({at, name, vol = 0.5}) => (
   <Sequence from={Math.max(0, at)} durationInFrames={60}><Audio src={staticFile(`p2/sfx/${name}.mp3`)} volume={vol} /></Sequence>
@@ -46,9 +50,9 @@ export const ReelPlataforma: React.FC = () => {
   const X = 12;
   return (
     <AbsoluteFill style={{background: '#141F52'}}>
-      <Sequence durationInFrames={L1}><Talk src="p2/t1.mp4" dur={L1} from={1.95} to={2.3} offset={0} /></Sequence>
-      <Sequence from={S2} durationInFrames={L2}><Talk src="p2/t2.mp4" dur={L2} from={1.95} to={2.3} offset={S2} /></Sequence>
-      <Sequence from={S3} durationInFrames={L3}><Talk src="p2/t3.mp4" dur={L3} from={2.0} to={2.35} offset={S3} /></Sequence>
+      <Sequence durationInFrames={L1}><Talk src="p2/t1.mp4" kf={KF1} offset={0} /></Sequence>
+      <Sequence from={S2} durationInFrames={L2}><Talk src="p2/t2.mp4" kf={KF2} offset={S2} /></Sequence>
+      <Sequence from={S3} durationInFrames={L3}><Talk src="p2/t3.mp4" kf={KF3} offset={S3} /></Sequence>
 
       <AbsoluteFill style={{background: 'linear-gradient(180deg, rgba(0,0,0,0) 58%, rgba(6,12,40,.5) 100%)'}} />
       <AbsoluteFill style={{background: 'linear-gradient(180deg, rgba(8,14,44,.6) 0%, rgba(8,14,44,.3) 16%, rgba(8,14,44,0) 27%)'}} />
