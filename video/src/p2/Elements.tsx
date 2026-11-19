@@ -2,6 +2,7 @@ import React from 'react';
 import {AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import {A1, A2, A3, S2, S3} from './timing';
 import {CONNECT, GESTOR, RED, TEC, TRACKING, dots} from './brand';
+import {LogoReveal} from './LogoReveal';
 
 const f = (s: number) => Math.round(s * 30);
 const g1 = (src: number) => f(src - A1);
@@ -86,10 +87,9 @@ const Panel: React.FC = () => {
           );
         })}
 
-        {/* uma so plataforma */}
-        <div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16, opacity: Math.min(1, one * 1.5), transform: `scale(${interpolate(one, [0, 1], [0.6, 1])})`}}>
-          <Img src={staticFile('p2/logo_tec.png')} style={{height: 150, filter: 'drop-shadow(0 6px 18px rgba(0,0,0,.6))'}} />
-          <div style={{fontFamily: 'Montserrat', fontWeight: 800, fontSize: 34, letterSpacing: 3, textTransform: 'uppercase', color: TEC.blue, background: TEC.mint, padding: '6px 26px', borderRadius: 14}}>Uma só plataforma</div>
+        {/* uma so plataforma: a logo se monta */}
+        <div style={{position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <LogoReveal start={ONE - 3} height={150} />
         </div>
       </div>
 
@@ -107,20 +107,16 @@ const Panel: React.FC = () => {
   );
 };
 
-const Badge: React.FC<{from: number; to: number; top: number}> = ({from, to, top}) => {
+const Badge: React.FC<{from: number; to: number; top: number; speed?: number}> = ({from, to, top, speed = 1}) => {
   const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
   if (frame < from || frame > to) return null;
-  const inn = spring({frame: frame - from, fps, config: {damping: 11, stiffness: 160, mass: 0.7}});
   const out = interpolate(frame, [to - 8, to], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
-  const ring = interpolate(frame - from, [0, 16], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const ring = interpolate(frame - from - 6, [0, 18], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   return (
     <>
-      <div style={{position: 'absolute', left: 540 - 360 * (0.4 + ring), top: top + 95 - 360 * (0.4 + ring), width: 720 * (0.4 + ring), height: 720 * (0.4 + ring), borderRadius: '50%', border: `6px solid ${TEC.mint}`, opacity: (1 - ring) * 0.9}} />
-      <div style={{position: 'absolute', left: 140, top, width: 800, height: 190, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12,
-        opacity: Math.min(1, inn * 1.4, out), transform: `scale(${interpolate(inn, [0, 1], [0.55, 1])})`}}>
-        <Img src={staticFile('p2/logo_tec.png')} style={{height: 118, filter: 'drop-shadow(0 6px 18px rgba(0,0,0,.6))'}} />
-        <div style={{fontFamily: 'Montserrat', fontWeight: 800, fontSize: 27, letterSpacing: 2.5, textTransform: 'uppercase', color: TEC.blue, background: TEC.mint, padding: '4px 18px', borderRadius: 10, boxShadow: '0 8px 20px rgba(0,0,0,.35)'}}>Uma só plataforma</div>
+      <div style={{position: 'absolute', left: 540 - 380 * (0.3 + ring), top: top + 95 - 380 * (0.3 + ring), width: 760 * (0.3 + ring), height: 760 * (0.3 + ring), borderRadius: '50%', border: `5px solid ${TEC.mint}`, opacity: ring > 0 ? (1 - ring) * 0.8 : 0}} />
+      <div style={{position: 'absolute', left: 90, top, width: 900, height: 190, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: out, transform: `scale(${interpolate(out, [0, 1], [0.9, 1])})`}}>
+        <LogoReveal start={from} height={118} speed={speed} />
       </div>
     </>
   );
@@ -196,7 +192,7 @@ export const Elements: React.FC = () => (
   <AbsoluteFill>
     <Panel />
     <Trio />
-    <Badge from={CUES.one2} to={S3 + 2} top={250} />
+    <Badge from={CUES.one2 - 6} to={S3 + 2} top={250} speed={1.35} />
     <Fragments />
     <Badge from={CUES.one3} to={g3(6.7)} top={165} />
     <LinkBio />
