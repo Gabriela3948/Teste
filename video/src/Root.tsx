@@ -7,6 +7,7 @@ import {ReelRedundancia} from './p3/Reel';
 import {TOTAL as TOTAL3} from './p3/timing';
 import {ReelFuturo} from './p4/Reel';
 import {TOTAL as TOTAL4} from './p4/timing';
+import {CapaMigracaoArte} from './p5/Capa';
 import {ReelMigracao} from './p5/Reel';
 import {TOTAL as TOTAL5} from './p5/timing';
 import '@fontsource/montserrat/500.css';
@@ -25,5 +26,6 @@ export const Root: React.FC = () => (
   <Composition id="AldeiaRedundancia" component={ReelRedundancia} durationInFrames={TOTAL3} fps={30} width={1080} height={1920} />
   <Composition id="AldeiaFuturo" component={ReelFuturo} durationInFrames={TOTAL4} fps={30} width={1080} height={1920} />
   <Composition id="AldeiaMigracao" component={ReelMigracao} durationInFrames={TOTAL5} fps={30} width={1080} height={1920} />
+  <Composition id="CapaMigracaoArte" component={CapaMigracaoArte} durationInFrames={1} fps={30} width={1080} height={1920} />
   </>
 );
