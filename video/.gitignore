@@ -1,1 +1,7 @@
 node_modules
+# O repositorio e publico: takes brutos e videos finais novos ficam fora dele.
+# Os takes podem ser regerados com scripts/prep_takes_v3.sh a partir das pastas do Drive.
+public/p3/t*.mp4
+public/p4/t*.mp4
+out/aldeia-redundancia-*
+out/aldeia-futuro-*
