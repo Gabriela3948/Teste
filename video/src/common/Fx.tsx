@@ -121,7 +121,7 @@ export const LogoTop: React.FC<{from: number; to: number; top?: number; height?:
 };
 
 // botao "Link na bio" na altura do peito, com seta
-export const LinkPill: React.FC<{from: number; top?: number}> = ({from, top = 1150}) => {
+export const LinkPill: React.FC<{from: number; top?: number; arrow?: string}> = ({from, top = 1150, arrow}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   if (frame < from) return null;
@@ -135,7 +135,7 @@ export const LinkPill: React.FC<{from: number; top?: number}> = ({from, top = 11
         <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1" /><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" /></svg>
         Link na bio
       </div>
-      <svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke={C.limeHi} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{position: 'absolute', left: 495, top: top - 110 - bob, opacity: s, filter: 'drop-shadow(0 4px 10px rgba(0,0,0,.6))'}}><path d="M12 4v15M5.5 12.5L12 19l6.500-6.500" /></svg>
+      <svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke={arrow ?? C.limeHi} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{position: 'absolute', left: 495, top: top - 110 - bob, opacity: s, filter: arrow ? undefined : 'drop-shadow(0 4px 10px rgba(0,0,0,.6))'}}><path d="M12 4v15M5.5 12.5L12 19l6.500-6.500" /></svg>
     </>
   );
 };

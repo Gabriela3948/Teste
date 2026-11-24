@@ -27,6 +27,9 @@ const P: Record<string, React.ReactNode> = {
   layers: <><path d="M12 3l9 5-9 5-9-5z" /><path d="M3 13l9 5 9-5" /></>,
   camera: <><rect x="3" y="7" width="13" height="10" rx="2" /><path d="M16 10.500l5-2.500v8l-5-2.500" /><circle cx="8" cy="12" r="2" /></>,
   box: <><rect x="6" y="4" width="12" height="16" rx="3" /><path d="M10 8h4M12 20v2" /><circle cx="12" cy="15" r="1.400" /></>,
+  repeat: <><path d="M17 2l4 4-4 4" /><path d="M3 11v-1a4 4 0 0 1 4-4h14" /><path d="M7 22l-4-4 4-4" /><path d="M21 13v1a4 4 0 0 1-4 4H3" /></>,
+  userx: <><circle cx="10" cy="8" r="3.600" /><path d="M2.500 20c1-4 4-5.500 7.500-5.500 1.500 0 2.900.300 4 .800" /><path d="M16.500 15l5 5M21.500 15l-5 5" /></>,
+  headset: <><path d="M4 14v-2a8 8 0 0 1 16 0v2" /><path d="M4 14h2.500a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" /><path d="M20 14h-2.500a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1H19a1 1 0 0 0 1-1z" /><path d="M20 19v.500a2.500 2.500 0 0 1-2.500 2.500H14" /></>,
 };
 
 export const Icon: React.FC<{name: string; color: string; size?: number; sw?: number; style?: React.CSSProperties}> = ({name, color, size = 44, sw = 1.9, style}) => (
