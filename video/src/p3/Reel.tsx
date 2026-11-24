@@ -28,7 +28,7 @@ const Hook: React.FC = () => {
   const out = interpolate(frame, [L1A - 5, L1A], [1, 0], CL);
   const fall = spring({frame: frame - 80, fps, config: {damping: 7, stiffness: 160, mass: 0.7}});
   return (
-    <div style={{position: 'absolute', left: 70, top: 1078, width: 940, borderRadius: 40, background: LIMEGRAD, boxShadow: '0 24px 60px rgba(0,20,40,.5)', padding: '38px 20px 44px', boxSizing: 'border-box', textAlign: 'center',
+    <div style={{position: 'absolute', left: 70, top: 1196, width: 940, borderRadius: 40, background: LIMEGRAD, boxShadow: '0 24px 60px rgba(0,20,40,.5)', padding: '38px 20px 44px', boxSizing: 'border-box', textAlign: 'center',
       opacity: Math.min(1, s * 1.6, out), transform: `scale(${interpolate(s, [0, 1], [0.7, 1])}) rotate(${interpolate(s, [0, 1], [-3, 0])}deg)`, ...headStyle(78, C.ink)}}>
       <div><Rise at={7}>Seu sistema</Rise> <Rise at={34}>sobrevive</Rise></div>
       <div><Rise at={58}>se o servidor</Rise> <span style={{display: 'inline-block', transformOrigin: '0% 100%', transform: `rotate(${fall * 8}deg) translateY(${fall * 8}px)`}}><Rise at={76} style={{color: '#C3301A'}}>cair?</Rise></span></div>
@@ -73,7 +73,7 @@ export const ReelRedundancia: React.FC = () => {
       <AbsoluteFill style={{background: 'linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(3,20,34,.5) 100%)'}} />
 
       <Hook />
-      <Stamp from={S1B + 59} to={S2 + 2} text="NÃO." top={1120} size={150} rot={-5} />
+      <Stamp from={S1B + 59} to={S2} text="NÃO." top={1180} size={150} rot={-5} />
 
       <Sequence from={PROB} durationInFrames={PROB_LEN}><SceneProblem dur={PROB_LEN} /></Sequence>
       <Sequence from={ALD} durationInFrames={ALD_LEN}><SceneAldeia dur={ALD_LEN} /></Sequence>
@@ -87,7 +87,7 @@ export const ReelRedundancia: React.FC = () => {
       <LightFlash at={S4} />
       <LightFlash at={END} />
 
-      <Captions words={WORDS} end={END} hidden={[[0, L1A], [S1B + 56, S2]]} />
+      <Captions words={WORDS} end={END} hidden={[[0, L1A], [S1B + 56, S2 + 1]]} />
 
       <Sequence from={END} durationInFrames={ENDLEN}>
         <AbsoluteFill style={{background: '#141F52'}}><OffthreadVideo src={staticFile('p2/closing.mp4')} style={{width: '100%', height: '100%'}} /></AbsoluteFill>
